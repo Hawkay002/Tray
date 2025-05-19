@@ -19,8 +19,8 @@
             --transition-speed: 0.35s;
             --initial-width: 180px;
             --initial-height: 220px;
-            --expanded-width: 320px;
-            --expanded-height: 400px;
+            --expanded-width: 600px;
+            --expanded-height: 220px;
         }
         
         * {
@@ -73,14 +73,13 @@
         
         .profile:hover {
             width: var(--expanded-width);
-            height: var(--expanded-height);
             z-index: 10;
             transform: translateY(-20px);
         }
         
         .profile-image-container {
             width: 100%;
-            height: calc(100% - 40px);
+            height: 100%;
             overflow: hidden;
             position: relative;
             transition: all var(--transition-speed) ease-out;
@@ -96,11 +95,14 @@
             filter: brightness(0.85);
         }
         
-        /* Hover state - full image */
+        /* Hover state - show full image width */
         .profile:hover .profile-image {
+            width: auto;
+            height: 100%;
+            object-fit: contain;
             object-position: center center;
             filter: brightness(1);
-            transform: scale(1.05);
+            transform: none;
         }
         
         .profile-name {
@@ -276,7 +278,7 @@
             <div class="profile-image-container">
                 <img src="images (3).jpeg" alt="Neo-Brutalist Profile" class="profile-image">
                 <div class="profile-overlay"></div>
-                <button class="visit-button" onclick="window.location.href='neo-brutalist.pages.dev">ENTER</button>
+                <button class="visit-button" onclick="window.location.href='https://neo-brutalist.pages.dev/'">ENTER</button>
             </div>
             <div class="profile-name">NEO-BRUTALIST</div>
         </div>
@@ -295,6 +297,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const profiles = document.querySelectorAll('.profile');
+            
+            // Preload images for smoother hover transitions
+            const imageUrls = [
+                'images (3).jpeg',
+                'images (2).jpeg'
+            ];
+            
+            imageUrls.forEach(url => {
+                const img = new Image();
+                img.src = url;
+            });
             
             // Add keyboard navigation
             profiles.forEach(profile => {
@@ -335,4 +348,4 @@
         });
     </script>
 </body>
-  </html>
+</html>
