@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Selection</title>
+    <style>
+        :root {
+            --neo-brutalist-bg: #F5F5F5;
+            --neo-brutalist-accent: #FF4E33;
+            --neo-brutalist-text: #222222;
+            --neo-brutalist-border: 4px solid var(--neo-brutalist-text);
+            
+            --neon-cyber-bg: #0F0F1A;
+            --neon-cyber-accent: #00F0FF;
+            --neon-cyber-text: #E0E0E0;
+            --neon-cyber-glow: 0 0 10px rgba(0, 240, 255, 0.7);
+            
+            --transition-speed: 0.35s;
+            --initial-width: 180px;
+            --initial-height: 220px;
+            --expanded-width: 320px;
+            --expanded-height: 400px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #111;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .profiles-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+            perspective: 1000px;
+        }
+        
+        .profile {
+            position: relative;
+            width: var(--initial-width);
+            height: var(--initial-height);
+            cursor: pointer;
+            transition: all var(--transition-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .profile:hover {
+            width: var(--expanded-width);
+            height: var(--expanded-height);
+            z-index: 10;
+            transform: translateY(-20px);
+        }
+        
+        .profile-image-container {
+            width: 100%;
+            height: calc(100% - 40px);
+            overflow: hidden;
+            position: relative;
+            transition: all var(--transition-speed) ease-out;
+        }
+        
+        /* Initial state - cropped image */
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+            transition: all var(--transition-speed) ease-out;
+            filter: brightness(0.85);
+        }
+        
+        /* Hover state - full image */
+        .profile:hover .profile-image {
+            object-position: center center;
+            filter: brightness(1);
+            transform: scale(1.05);
+        }
+        
+        .profile-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 10px;
+            transition: all var(--transition-speed) ease-out;
+            z-index: 2;
+        }
+        
+        .profile:hover .profile-name {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        
+        .visit-button {
+            position: absolute;
+            bottom: 20px;
+            right: -200px;
+            padding: 8px 20px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all calc(var(--transition-speed) + 0.1s) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 10;
+            opacity: 0;
+        }
+        
+        .profile:hover .visit-button {
+            right: 20px;
+            opacity: 1;
+        }
+        
+        /* Neo-Brutalist Profile */
+        .neo-brutalist {
+            background-color: var(--neo-brutalist-bg);
+            border: var(--neo-brutalist-border);
+            box-shadow: 8px 8px 0 var(--neo-brutalist-text);
+        }
+        
+        .neo-brutalist .profile-name {
+            color: var(--neo-brutalist-text);
+            background-color: var(--neo-brutalist-bg);
+            border-top: var(--neo-brutalist-border);
+        }
+        
+        .neo-brutalist .visit-button {
+            background-color: var(--neo-brutalist-accent);
+            color: var(--neo-brutalist-text);
+            border: var(--neo-brutalist-border);
+        }
+        
+        .neo-brutalist .visit-button:hover {
+            background-color: var(--neo-brutalist-text);
+            color: var(--neo-brutalist-accent);
+        }
+        
+        /* Neon-Cyber-Minimalist Profile */
+        .neon-cyber {
+            background-color: var(--neon-cyber-bg);
+            border: 1px solid var(--neon-cyber-accent);
+            box-shadow: var(--neon-cyber-glow);
+        }
+        
+        .neon-cyber .profile-name {
+            color: var(--neon-cyber-accent);
+            text-shadow: var(--neon-cyber-glow);
+            background-color: rgba(15, 15, 26, 0.7);
+            border-top: 1px solid var(--neon-cyber-accent);
+        }
+        
+        .neon-cyber .visit-button {
+            background-color: transparent;
+            color: var(--neon-cyber-accent);
+            border: 1px solid var(--neon-cyber-accent);
+            text-shadow: var(--neon-cyber-glow);
+        }
+        
+        .neon-cyber .visit-button:hover {
+            background-color: rgba(0, 240, 255, 0.3);
+        }
+        
+        /* Overlay effect */
+        .profile-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 50%);
+            z-index: 1;
+            transition: all var(--transition-speed) ease-out;
+        }
+        
+        .profile:hover .profile-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            :root {
+                --initial-width: 150px;
+                --initial-height: 190px;
+                --expanded-width: 280px;
+                --expanded-height: 360px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 30px;
+            }
+            
+            .profiles-container {
+                gap: 15px;
+            }
+            
+            .profile-name {
+                font-size: 1.1rem;
+            }
+            
+            .visit-button {
+                padding: 6px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            :root {
+                --initial-width: 130px;
+                --initial-height: 170px;
+                --expanded-width: 260px;
+                --expanded-height: 340px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .profiles-container {
+                gap: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profiles-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .profile {
+                width: 220px !important;
+                height: 260px !important;
+            }
+            
+            .profile:hover {
+                width: 280px !important;
+                height: 360px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Who's watching?</h1>
+    
+    <div class="profiles-container">
+        <!-- Neo-Brutalist Profile -->
+        <div class="profile neo-brutalist">
+            <div class="profile-image-container">
+                <img src="images (3).jpeg" alt="Neo-Brutalist Profile" class="profile-image">
+                <div class="profile-overlay"></div>
+                <button class="visit-button" onclick="window.location.href='neo-brutalist.pages.dev">ENTER</button>
+            </div>
+            <div class="profile-name">NEO-BRUTALIST</div>
+        </div>
+        
+        <!-- Neon-Cyber-Minimalist Profile -->
+        <div class="profile neon-cyber">
+            <div class="profile-image-container">
+                <img src="images (2).jpeg" alt="Neon-Cyber Profile" class="profile-image">
+                <div class="profile-overlay"></div>
+                <button class="visit-button" onclick="window.location.href='https://hawkay002.github.io/Connect/'">ENTER</button>
+            </div>
+            <div class="profile-name">NEON-CYBER</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const profiles = document.querySelectorAll('.profile');
+            
+            // Add keyboard navigation
+            profiles.forEach(profile => {
+                profile.addEventListener('focus', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                profile.addEventListener('blur', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+                
+                profile.addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        const button = this.querySelector('.visit-button');
+                        if (button) {
+                            window.location.href = button.onclick.toString().match(/window\.location\.href='([^']+)'/)[1];
+                        }
+                    }
+                });
+                
+                profile.setAttribute('tabindex', '0');
+            });
+            
+            // Add smooth hover in/out with delay
+            let hoverTimeout;
+            profiles.forEach(profile => {
+                profile.addEventListener('mouseenter', function() {
+                    clearTimeout(hoverTimeout);
+                    this.classList.add('hover-active');
+                });
+                
+                profile.addEventListener('mouseleave', function() {
+                    hoverTimeout = setTimeout(() => {
+                        this.classList.remove('hover-active');
+                    }, 100);
+                });
+            });
+        });
+    </script>
+</body>
+  </html>
